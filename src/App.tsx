@@ -3925,14 +3925,13 @@ const App: React.FC = () => {
     setCategories(categoryFilter)
   }, [])
 
-  console.log(categories)
   return (
     <div className="container-fluid px-0">
       <div className="header sticky-top">
         <Header />
       </div>
       <div className="main">
-        <Main games={games} />
+        <Main games={games} categories={categories} />
       </div>
       <div className="footer">
         <Footer />
