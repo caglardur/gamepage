@@ -8,7 +8,7 @@ const SingleHighlights: React.FC<{ game: Game }> = ({ game }) => {
   return (
     <div className="col">
       {game ? (
-        <div className="card rounded-0 bg-light p-0">
+        <div role="button" className="card rounded-0 bg-light p-0">
           <img src={game.thumbnail} className="card-img-top rounded-0" alt={game.title} />
           <div className="card-body">
             <div className="card-title overflow-hidden" style={{ fontSize: "14px" }}>

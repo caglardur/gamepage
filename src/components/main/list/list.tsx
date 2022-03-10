@@ -1,6 +1,8 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCompass, faFilter, faAngleLeft, faAngleRight, faFastBackward, faFastForward } from "@fortawesome/free-solid-svg-icons"
+
+import { useAppSelector } from "../../../store/hook"
 
 import { Game } from "../../../Interfaces"
 import Filter from "./filter"
@@ -9,14 +11,27 @@ const List: React.FC<{ games: Game[]; categories: string[] }> = ({ games, catego
   const [page, setPage] = React.useState(0)
   const [totalPage, setTotalPage] = React.useState(0)
   const [shortList, setShortList] = React.useState<Game[]>([])
+  const [filteredGames, setFilteredGames] = React.useState<Game[]>(games)
+  const favCat = useAppSelector(state => state.filter.value)
+
+  useEffect(() => {
+    if (favCat.length > 0) {
+      const newList: Game[] = games.filter(game => favCat.includes(game.genre))
+      setFilteredGames(newList)
+      console.log(newList)
+      console.log(favCat)
+    } else {
+      setFilteredGames(games)
+    }
+  }, [favCat, games])
 
   React.useEffect(() => {
-    setTotalPage(Math.ceil(games.length / 10))
-  }, [games])
+    setTotalPage(Math.ceil(filteredGames.length / 10))
+  }, [filteredGames])
 
   React.useEffect(() => {
-    setShortList(games.slice(page * 10, page * 10 + 10))
-  }, [games, page])
+    setShortList(filteredGames.slice(page * 10, page * 10 + 10))
+  }, [filteredGames, page])
 
   return (
     <div className="container-fluid my-3">

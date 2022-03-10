@@ -1,15 +1,20 @@
 import React from "react"
 import { Range } from "react-range"
+import { useAppSelector, useAppDispatch } from "../../../store/hook"
+
+import { setFilter } from "../../../store/filterReducer"
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 
 const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
   const [values, setValues] = React.useState<number[]>([1981, 2022])
-  const [favCat, setFavCat] = React.useState<string[]>([])
+  const favCat = useAppSelector(state => state.filter.value)
+  const dispatch = useAppDispatch()
 
   const favCatHandler = (cat: string) => {
     if (!favCat.includes(cat)) {
-      setFavCat([...favCat, cat])
+      dispatch(setFilter([...favCat, cat]))
     } else {
       let newFavCat: string[] = []
       favCat.map(item => {
@@ -19,9 +24,10 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
           return null
         }
       })
-      setFavCat(newFavCat)
+      dispatch(setFilter(newFavCat))
     }
   }
+
   return (
     <div className="col">
       <div className="col mt-2">
@@ -83,7 +89,7 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
               </div>
             ))}
             {favCat.length > 1 && (
-              <div role="button" className="col-auto px-2 py-1 border rounded m-1 shadow-sm bg-danger text-light" onClick={() => setFavCat([])}>
+              <div role="button" className="col-auto px-2 py-1 border rounded m-1 shadow-sm bg-danger border-danger text-light" onClick={() => dispatch(setFilter([]))}>
                 <FontAwesomeIcon icon={faCircleXmark} style={{ marginRight: "4px" }} /> Clear All
               </div>
             )}
