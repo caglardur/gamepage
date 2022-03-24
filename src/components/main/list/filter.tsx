@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 
 const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
-  const [values, setValues] = React.useState<number[]>([1981, 2022])
-  const favCat = useAppSelector(state => state.filter.value)
+  const favCat = useAppSelector(state => state.filter.value.category)
+  const selectYear = useAppSelector(state => state.filter.value.year)
   const dispatch = useAppDispatch()
 
   const favCatHandler = (cat: string) => {
     if (!favCat.includes(cat)) {
-      dispatch(setFilter([...favCat, cat]))
+      dispatch(setFilter({ year: selectYear, category: [...favCat, cat] }))
     } else {
       let newFavCat: string[] = []
       favCat.map(item => {
@@ -24,9 +24,11 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
           return null
         }
       })
-      dispatch(setFilter(newFavCat))
+      dispatch(setFilter({ year: selectYear, category: newFavCat }))
     }
   }
+
+  const thisYear = Number(new Date().getFullYear())
 
   return (
     <div className="col">
@@ -36,9 +38,9 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
           <Range
             step={1}
             min={1981}
-            max={2022}
-            values={values}
-            onChange={e => setValues(e)}
+            max={thisYear}
+            values={selectYear}
+            onChange={e => dispatch(setFilter({ year: [...e], category: favCat }))}
             renderTrack={({ props, children }) => (
               <div
                 {...props}
@@ -70,11 +72,11 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
         <div className="col">
           <div className="row align-items-center">
             <div className="col">
-              <input className="form-control shadow-sm" value={values[0]} onChange={e => setValues([Number(e.target.value), values[1]])} style={{ textAlign: "center" }} />
+              <input className="form-control shadow-sm" value={selectYear[0]} onChange={e => dispatch(setFilter({ year: [Number(e.target.value), selectYear[1]], category: favCat }))} style={{ textAlign: "center" }} />
             </div>
             <div className="col-auto">-</div>
             <div className="col">
-              <input className="form-control shadow-sm" value={values[1]} onChange={e => setValues([values[0], Number(e.target.value)])} style={{ textAlign: "center" }} />
+              <input className="form-control shadow-sm" value={selectYear[1]} onChange={e => dispatch(setFilter({ year: [selectYear[0], Number(e.target.value)], category: favCat }))} style={{ textAlign: "center" }} />
             </div>
           </div>
         </div>
@@ -89,7 +91,7 @@ const Filter: React.FC<{ categories: string[] }> = ({ categories }) => {
               </div>
             ))}
             {favCat.length > 1 && (
-              <div role="button" className="col-auto px-2 py-1 border rounded m-1 shadow-sm bg-danger border-danger text-light" onClick={() => dispatch(setFilter([]))}>
+              <div role="button" className="col-auto px-2 py-1 border rounded m-1 shadow-sm bg-danger border-danger text-light" onClick={() => dispatch(setFilter({ year: selectYear, category: [] }))}>
                 <FontAwesomeIcon icon={faCircleXmark} style={{ marginRight: "4px" }} /> Clear All
               </div>
             )}

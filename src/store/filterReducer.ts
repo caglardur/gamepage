@@ -2,18 +2,31 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "./store"
 
 interface filterState {
-  value: string[]
+  value: {
+    year: number[]
+    category: string[]
+  }
 }
 
+interface filterPayload {
+  year: number[]
+  category: string[]
+}
+
+const thisYear = Number(new Date().getFullYear())
+
 const initialState: filterState = {
-  value: []
+  value: {
+    year: [1981, thisYear],
+    category: []
+  }
 }
 
 export const filterReducer = createSlice({
   name: "filter",
   initialState,
   reducers: {
-    setFilter: (state, action: PayloadAction<string[]>) => {
+    setFilter: (state, action: PayloadAction<filterPayload>) => {
       state.value = action.payload
     }
   }

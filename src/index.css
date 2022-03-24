@@ -14,7 +14,8 @@ a:active {
   color: inherit;
 }
 
-.header {
+.header,
+.footer {
   background: rgba(26, 26, 26, 0.9);
 }
 
@@ -22,4 +23,16 @@ a:active {
   -moz-box-shadow: inset 0 -7px 9px -7px rgba(0, 0, 0, 0.4);
   -webkit-box-shadow: inset 0 -7px 9px -7px rgba(0, 0, 0, 0.4);
   box-shadow: inset 0 -7px 9px -7px rgba(0, 0, 0, 0.4);
+}
+
+.hoverable:hover {
+  color: white;
+}
+
+.searchBar,
+.searchBar:focus,
+.searchBar:target {
+  outline-style: none;
+  box-shadow: none;
+  border-color: transparent;
 }

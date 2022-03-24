@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCompass, faFilter, faAngleLeft, faAngleRight, faFastBackward, faFastForward } from "@fortawesome/free-solid-svg-icons"
 
@@ -9,27 +9,29 @@ import Filter from "./filter"
 
 const List: React.FC<{ games: Game[]; categories: string[] }> = ({ games, categories }) => {
   const [page, setPage] = React.useState(0)
-  const [totalPage, setTotalPage] = React.useState(0)
-  const [shortList, setShortList] = React.useState<Game[]>([])
-  const [filteredGames, setFilteredGames] = React.useState<Game[]>(games)
-  const favCat = useAppSelector(state => state.filter.value)
+  const [totalPage, setTotalPage] = useState(0)
+  const [shortList, setShortList] = useState<Game[]>([])
+  const [filteredGames, setFilteredGames] = useState<Game[]>(games)
+  const favCat = useAppSelector(state => state.filter.value.category)
+  const selectYear = useAppSelector(state => state.filter.value.year)
 
   useEffect(() => {
     if (favCat.length > 0) {
-      const newList: Game[] = games.filter(game => favCat.includes(game.genre))
+      const newList: Game[] = games.filter(game => favCat.includes(game.genre) && Number(new Date(game.release_date).getFullYear()) >= selectYear[0] && Number(new Date(game.release_date).getFullYear()) <= selectYear[1])
       setFilteredGames(newList)
-      console.log(newList)
-      console.log(favCat)
+      setPage(0)
     } else {
-      setFilteredGames(games)
+      const newList: Game[] = games.filter(game => Number(new Date(game.release_date).getFullYear()) >= selectYear[0] && Number(new Date(game.release_date).getFullYear()) <= selectYear[1])
+      setFilteredGames(newList)
+      setPage(0)
     }
-  }, [favCat, games])
+  }, [favCat, games, selectYear])
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTotalPage(Math.ceil(filteredGames.length / 10))
   }, [filteredGames])
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShortList(filteredGames.slice(page * 10, page * 10 + 10))
   }, [filteredGames, page])
 
@@ -73,12 +75,12 @@ const List: React.FC<{ games: Game[]; categories: string[] }> = ({ games, catego
             </div>
             <div className="col mt-2 d-flex justify-content-center">
               <ul className="pagination pagination-sm">
-                <li role="button" className={page === 0 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page === 0 ? null : setPage(0))}>
+                <li role="button" className={page === 0 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page <= 0 ? null : setPage(0))}>
                   <div className="page-link">
                     <FontAwesomeIcon icon={faFastBackward} />
                   </div>
                 </li>
-                <li role="button" className={page === 0 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page === 0 ? null : setPage(page - 1))}>
+                <li role="button" className={page === 0 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page <= 0 ? null : setPage(page - 1))}>
                   <div className="page-link">
                     <FontAwesomeIcon icon={faAngleLeft} />
                   </div>
@@ -90,12 +92,12 @@ const List: React.FC<{ games: Game[]; categories: string[] }> = ({ games, catego
                   </div>
                 </li>
 
-                <li role="button" className={page === totalPage - 1 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page === totalPage - 1 ? null : setPage(page + 1))}>
+                <li role="button" className={page === totalPage - 1 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page > totalPage - 2 ? null : setPage(page + 1))}>
                   <div className="page-link">
                     <FontAwesomeIcon icon={faAngleRight} />
                   </div>
                 </li>
-                <li role="button" className={page === totalPage - 1 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page === totalPage - 1 ? null : setPage(totalPage - 1))}>
+                <li role="button" className={page === totalPage - 1 ? "page-item disabled p-1" : "page-item p-1"} onClick={() => (page > totalPage - 1 ? null : setPage(totalPage - 1))}>
                   <div className="page-link">
                     <FontAwesomeIcon icon={faFastForward} />
                   </div>
